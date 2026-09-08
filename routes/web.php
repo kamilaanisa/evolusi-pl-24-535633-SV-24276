@@ -7,4 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('tugas', TugasController::class)->except(['show', 'edit']);
+Route::resource('tugas', TugasController::class)
+    ->parameters(['tugas' => 'tugas'])
+    ->except(['show', 'edit']);
