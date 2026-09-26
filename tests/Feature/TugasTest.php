@@ -13,7 +13,7 @@ class TugasTest extends TestCase
     public function test_halaman_index_tugas_bisa_diakses(): void
     {
         $response = $this->get(route('tugas.index'));
-        $response->assertStatus(200);
+        $response->assertStatus(999);
     }
 
     public function test_user_bisa_menambah_tugas_dengan_data_valid(): void
