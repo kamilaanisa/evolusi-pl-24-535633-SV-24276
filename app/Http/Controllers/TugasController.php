@@ -47,4 +47,11 @@ class TugasController extends Controller
             ->route('tugas.index')
             ->with('success', 'Tugas dihapus.');
     }
+
+    public function apiIndex()
+    {
+    $tugas = Tugas::orderBy('deadline')->get();
+
+    return response()->json($tugas);    
+    }
 }
