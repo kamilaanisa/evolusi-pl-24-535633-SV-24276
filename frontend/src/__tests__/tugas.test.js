@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { hitungTugasBelumSelesai, urutkanBerdasarkanDeadline } from '../tugas'
+import { hitungTugasBelumSelesai, urutkanBerdasarkanDeadline } from '../utils/tugas'
 
 describe('hitungTugasBelumSelesai', () => {
   it('menghitung jumlah tugas yang belum selesai dengan benar', () => {
