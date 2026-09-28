@@ -39,27 +39,45 @@ onMounted(async () => {
   <div class="container">
     <div class="header">
       <h1>Daftar Tugas Kuliah</h1>
-      <p class="subtitle">Daftar tugas terintegrasi langsung dari API Laravel</p>
+      <p class="subtitle">
+        Daftar tugas terintegrasi langsung dari API Laravel
+      </p>
     </div>
 
     <!-- Status Loading -->
-    <div v-if="loading" class="state-card">
+    <div
+      v-if="loading"
+      class="state-card"
+    >
       <p>⏳ Memuat data tugas...</p>
     </div>
 
     <!-- Status Error -->
-    <div v-else-if="error" class="state-card error">
+    <div
+      v-else-if="error"
+      class="state-card error"
+    >
       <p>⚠️ {{ error }}</p>
     </div>
 
     <!-- Data Kosong -->
-    <div v-else-if="tugas.length === 0" class="state-card empty">
+    <div
+      v-else-if="tugas.length === 0"
+      class="state-card empty"
+    >
       <p>🎉 Belum ada tugas, santai dulu!</p>
     </div>
 
     <!-- List Tugas Card -->
-    <div v-else class="tugas-grid">
-      <div v-for="item in tugas" :key="item.id" class="tugas-card">
+    <div
+      v-else
+      class="tugas-grid"
+    >
+      <div
+        v-for="item in tugas"
+        :key="item.id"
+        class="tugas-card"
+      >
         <div class="card-header">
           <h3>{{ item.judul }}</h3>
           <span :class="['badge', item.prioritas]">{{ item.prioritas }}</span>

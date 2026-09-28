@@ -12,7 +12,10 @@ import { RouterLink } from 'vue-router'
       </p>
       
       <div class="action-buttons">
-        <RouterLink to="/about" class="btn-primary">
+        <RouterLink
+          to="/about"
+          class="btn-primary"
+        >
           Lihat Daftar Tugas
           <span class="arrow">→</span>
         </RouterLink>

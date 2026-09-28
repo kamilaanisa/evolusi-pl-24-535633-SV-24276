@@ -11,8 +11,18 @@ import { RouterLink, RouterView } from 'vue-router'
           <span class="logo-text">TaskMaster</span>
         </div>
         <nav class="nav-links">
-          <RouterLink to="/" class="nav-item">Beranda</RouterLink>
-          <RouterLink to="/about" class="nav-item">Daftar Tugas</RouterLink>
+          <RouterLink
+            to="/"
+            class="nav-item"
+          >
+            Beranda
+          </RouterLink>
+          <RouterLink
+            to="/about"
+            class="nav-item"
+          >
+            Daftar Tugas
+          </RouterLink>
         </nav>
       </div>
     </header>
