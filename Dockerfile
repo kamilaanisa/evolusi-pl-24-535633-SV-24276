@@ -1,41 +1,43 @@
-FROM php:8.3-cli-alpine
+# ============ STAGE 1: builder (boleh besar) ============
+FROM php:8.3-cli-alpine AS builder
 
-# 1 · Pasang dependensi sistem yang dibutuhkan ekstensi PHP
-RUN apk add --no-cache $PHPIZE_DEPS libzip-dev sqlite-dev \
-    && docker-php-ext-install pdo pdo_sqlite zip
+RUN apk add --no-cache $PHPIZE_DEPS git unzip libzip-dev sqlite-dev \
+    && docker-php-ext-install zip
 
-# 2 · Salin composer dari image resmi composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.8 /usr/bin/composer /usr/bin/composer
 
-# 3 · Tentukan direktori kerja
 WORKDIR /var/www/html
 
-# 4 · Salin HANYA file dependency dulu, ini kunci caching
+# dependency disalin dan dipasang lebih dulu supaya cache terpakai
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
-# 5 · Baru salin seluruh kode aplikasi
 COPY . .
+RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
+    && composer dump-autoload --optimize --no-dev
 
-# 6 · Buat folder yang dibutuhkan Laravel (tidak ikut tersalin dari repo)
-RUN mkdir -p storage/framework/cache/data \
-             storage/framework/sessions \
-             storage/framework/views \
-             storage/logs \
-             bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
-
-# 7 · Selesaikan autoload setelah kode aplikasi ada
-RUN composer dump-autoload --optimize
-
-# 8 · Siapkan .env dan database SQLite di dalam image
 RUN cp .env.example .env \
     && mkdir -p database \
     && touch database/database.sqlite \
     && sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env \
     && php artisan key:generate --force
 
+
+# ============ STAGE 2: runner (yang dikirim ke produksi) ============
+FROM php:8.3-cli-alpine AS runner
+
+LABEL org.opencontainers.image.source="https://github.com/kamilaanisa/evolusi-pl-24-535633-SV-24276"
+
+WORKDIR /var/www/html
+
+# hanya hasil kerja builder yang dibawa, pemiliknya langsung www-data
+COPY --from=builder --chown=www-data:www-data /var/www/html /var/www/html
+
+USER www-data
+
 EXPOSE 8000
 
-# 9 · Jalankan migration, baru nyalakan server, tiap kali container start
+HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 \
+    CMD curl -fs http://127.0.0.1:8000/ || exit 1
+
 CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000"]
